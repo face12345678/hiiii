@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Thanawat_</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="logo">Thanwat_</div>
+    <nav> 
+      <a href="#features">คุณสมบัติ</a>
+      <a href="#pricing">ราคา</a>
+      <a href="#contact">ติดต่อ</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-left">
+        <div class="kicker">เปิดตัวใหม่ • รุ่นลิมิเต็ด</div>
+        <h1>อุปกรณ์สมาร์ทที่ทำให้ชีวิตคุณง่ายขึ้น</h1>
+        <p class="lead">ดีไซน์โฉบเฉี่ยว ประสิทธิภาพสูง เชื่อมต่อได้ทุกที่ — ลงทะเบียนเพื่อรับส่วนลดพิเศษ</p>
+        <div class="cta">
+          <button class="btn btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">สั่งจองก่อน</button>
+          <button class="btn btn-ghost" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">ดูคุณสมบัติ</button>
+        </div>
+        <div style="margin-top:12px;color:var(--muted);font-size:13px">มีสินค้าจำนวนจำกัด — ส่งฟรีทั่วประเทศ</div>
+      </div>
+
+      <div class="hero-right">
+        <div class="device">
+          <img src="https://media.discordapp.net/attachments/1409885644142149696/1436956922984005784/image.png?ex=693b052b&is=6939b3ab&hm=070d9fd8736b5bdde2e70d433419081e54ddc6f0519ac07b0ec5f9421f34ad5c&=&format=webp&quality=lossless" alt="สินค้า" />
+        </div>
+        <div style="margin-top:12px;color:var(--muted);font-size:13px">ภาพ / วิดีโอสินค้า • รีวิวสั้น</div>
+      </div>
+    </section>
+
+    <section id="features" class="features">
+      <div class="card">
+        <h3>การเชื่อมต่อไร้สาย</h3>
+        <p>เชื่อมต่อรวดเร็ว ใช้งานตลอดทั้งวัน และรองรับมาตรฐานล่าสุด</p>
+      </div>
+      <div class="card">
+        <h3>แบตเตอรี่ยาวนาน</h3>
+        <p>อยู่ได้เป็นสัปดาห์หนึ่งต่อการชาร์จหนึ่งครั้ง ขึ้นอยู่กับการใช้งาน</p>
+      </div>
+      <div class="card">
+        <h3>ดีไซน์พรีเมียม</h3>
+        <p>วัสดุคุณภาพสูง เน้นความสวยงามและทนทาน</p>
+      </div>
+    </section>
+
+    <section id="contact" style="padding:28px 6%">
+      <div class="form-wrap">
+        <h3>สมัครรับข้อมูล / ติดต่อ</h3>
+        <p class="muted">กรอกอีเมลแล้วกดส่ง เราจะติดต่อกลับพร้อมข่าวการเปิดตัว</p>
+        <form id="leadForm">
+          <div class="row">
+            <input type="text" id="name" placeholder="ชื่อ" required>
+            <input type="email" id="email" placeholder="gmail" required>
+            <button class="btn btn-primary" type="submit">ส่ง</button>
+          </div>
+        </form>
+        <div id="msg" class="muted"></div>
+      </div>
+    </section>
+
+    <section id="admin" style="padding:20px 6%;background:transparent;">
+      <h3>รายการผู้ลงทะเบียน </h3>
+      <button onclick="loadLeads()">โหลดรายการ</button>
+      <pre id="leadsPre" style="background:#07121a;padding:12px;border-radius:8px;overflow:auto;"></pre>
+    </section>
+  </main>
+
+  <footer>
+    <div>© THanawat_ </div>
+    <div>ติดต่อ: thanawatface57@gmail.com</div> 
+    <div>Facebook</div>
+    <div>IG _face_17</div>
+    <div>Line 0924186636</div>
+  </footer>
+
+<script>
+document.getElementById('leadForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+
+  const res = await fetch('/api/leads', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ name, email })
+  });
+
+  const data = await res.json();
+  if(data && data.success){
+    document.getElementById('msg').textContent = 'ขอบคุณ ' + name + '! เราได้รับข้อมูลของคุณแล้ว';
+    document.getElementById('leadForm').reset();
+  } else {
+    document.getElementById('msg').textContent = 'เกิดข้อผิดพลาด: ' + (data?.error ?? 'ไม่ทราบ');
+  }
+});
+
+async function loadLeads(){
+  const res = await fetch('/api/leads');
+  const data = await res.json();
+  document.getElementById('leadsPre').textContent = JSON.stringify(data, null, 2);
+}
+</script>
+</body>
+</html>
